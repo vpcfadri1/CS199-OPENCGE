@@ -96,9 +96,7 @@ def test_eqpqerror():
 
 # Comparing labor supply from the model to that in the data
 def test_eqpf():
-    F = pd.DataFrame.from_dict(
-        {"LAB": [10, 40], "CAP": [30, 20]}, orient="index"
-    )
+    F = pd.DataFrame.from_dict({"LAB": [10, 40], "CAP": [30, 20]}, orient="index")
     Ff0 = pd.Series(50, index=["LAB", "CAP"])
     expected_pf_error = 0
     test_pf_error = aggregates.eqpf(F, Ff0)
@@ -107,9 +105,7 @@ def test_eqpf():
 
 # Comparing capital demand in the model and data
 def test_eqpk():
-    F = pd.DataFrame.from_dict(
-        {"LAB": [10, 40], "CAP": [30, 20]}, orient="index"
-    )
+    F = pd.DataFrame.from_dict({"LAB": [10, 40], "CAP": [30, 20]}, orient="index")
     Kk = 50
     Ff0 = Ff0 = pd.Series(50, index=["LAB", "CAP"])
     Kk0 = Ff0 = pd.Series(50, index=["CAP"])

@@ -59,9 +59,7 @@ def test_row_total():
     expected_rowtotal = pd.DataFrame.from_dict(rowdict, orient="index")
     expected_rowtotal.columns = [None]
     test_rowtotal = execute.row_total()
-    assert_series_equal(
-        expected_rowtotal[None], test_rowtotal, check_dtype=False
-    )
+    assert_series_equal(expected_rowtotal[None], test_rowtotal, check_dtype=False)
 
 
 def test_col_total():
@@ -88,9 +86,7 @@ def test_col_total():
     expected_coltotal = pd.DataFrame.from_dict(coldict, orient="index")
     expected_coltotal.columns = [None]
     test_coltotal = execute.col_total()
-    assert_series_equal(
-        expected_coltotal[None], test_coltotal, check_dtype=False
-    )
+    assert_series_equal(expected_coltotal[None], test_coltotal, check_dtype=False)
 
 
 def test_row_col_equal():

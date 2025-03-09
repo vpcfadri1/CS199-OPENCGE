@@ -121,9 +121,7 @@ def runner():
         cge_args = [p, d, ind, h, Zbar, Qbar, Kdbar, pdbar, Ffbar, R, er]
 
         print("initial guess = ", pvec)
-        results = opt.root(
-            cge.cge_system, pvec, args=cge_args, method="lm", tol=1e-5
-        )
+        results = opt.root(cge.cge_system, pvec, args=cge_args, method="lm", tol=1e-5)
         pprime = results.x
         pyprime = pprime[0 : len(ind)]
         pfprime = pprime[len(ind) : len(ind) + len(h)]

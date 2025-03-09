@@ -16,12 +16,8 @@ class model_data(object):
     """
 
     def __init__(self, sam, h, u, ind):
-        self.Sf0 = DataFrame(
-            sam, index=["INV"], columns=["EXT"]
-        )  # foreign saving
-        self.Sp0 = DataFrame(
-            sam, index=["INV"], columns=["HOH"]
-        )  # private saving'
+        self.Sf0 = DataFrame(sam, index=["INV"], columns=["EXT"])  # foreign saving
+        self.Sp0 = DataFrame(sam, index=["INV"], columns=["HOH"])  # private saving'
         self.Sg0 = DataFrame(
             sam, index=["INV"], columns=["GOV"]
         )  # government saving/budget balance
@@ -35,12 +31,8 @@ class model_data(object):
 
         self.Td0 = DataFrame(sam, index=["DTX"], columns=["HOH"])  # direct tax
         self.Trf0 = DataFrame(sam, index=["HOH"], columns=["GOV"])  # transfers
-        self.Tz0 = DataFrame(
-            sam, index=["ACT"], columns=list(ind)
-        )  # production tax
-        self.Tm0 = DataFrame(
-            sam, index=["IDT"], columns=list(ind)
-        )  # import tariff
+        self.Tz0 = DataFrame(sam, index=["ACT"], columns=list(ind))  # production tax
+        self.Tm0 = DataFrame(sam, index=["IDT"], columns=list(ind))  # import tariff
 
         self.F0 = DataFrame(
             sam, index=list(h), columns=list(ind)
@@ -50,9 +42,7 @@ class model_data(object):
         self.X0 = DataFrame(
             sam, index=list(ind), columns=list(ind)
         )  # intermediate input
-        self.Xx0 = self.X0.sum(
-            axis=0
-        )  # total intermediate input by the j-th sector
+        self.Xx0 = self.X0.sum(axis=0)  # total intermediate input by the j-th sector
         self.Z0 = self.Y0 + self.Xx0  # output of the j-th good
 
         self.Xp0 = DataFrame(
@@ -61,19 +51,14 @@ class model_data(object):
         self.Xg0 = DataFrame(
             sam, index=list(ind), columns=["GOV"]
         )  # government consumption
-        self.Xv0 = DataFrame(
-            sam, index=list(ind), columns=["INV"]
-        )  # investment demand
+        self.Xv0 = DataFrame(sam, index=list(ind), columns=["INV"])  # investment demand
         self.E0 = DataFrame(sam, index=list(ind), columns=["EXT"])  # exports
         self.E0 = self.E0["EXT"]
         self.M0 = DataFrame(sam, index=["EXT"], columns=list(ind))  # imports
         self.M0 = self.M0.loc["EXT"]
 
         self.Q0 = (
-            self.Xp0["HOH"]
-            + self.Xg0["GOV"]
-            + self.Xv0["INV"]
-            + self.X0.sum(axis=1)
+            self.Xp0["HOH"] + self.Xg0["GOV"] + self.Xv0["INV"] + self.X0.sum(axis=1)
         )  # domestic supply/Armington composite good
         tauz = self.Tz0 / self.Z0  # production tax rate
         self.D0 = (1 + tauz.loc["ACT"]) * self.Z0 - self.E0  # domestic
@@ -113,23 +98,17 @@ class parameters(object):
 
         self.sigma = [3, 1.2, 3, 3]  # elasticity of substitution
         self.sigma = Series(self.sigma, index=list(ind))
-        self.eta = (
-            self.sigma - 1
-        ) / self.sigma  # substitution elasticity parameter
+        self.eta = (self.sigma - 1) / self.sigma  # substitution elasticity parameter
 
         self.psi = [3, 1.2, 3, 3]  # elasticity of transformation
         self.psi = Series(self.psi, index=list(ind))
-        self.phi = (
-            self.psi + 1
-        ) / self.psi  # transformation elasticity parameter
+        self.phi = (self.psi + 1) / self.psi  # transformation elasticity parameter
 
         self.alpha = d.Xp0 / d.XXp0  # share parameter in utility function
         self.alpha = self.alpha["HOH"]
         self.beta = d.F0 / d.Y0  # share parameter in production function
         temp = d.F0**self.beta
-        self.b = d.Y0 / temp.prod(
-            axis=0
-        )  # scale parameter in production function
+        self.b = d.Y0 / temp.prod(axis=0)  # scale parameter in production function
 
         self.ax = d.X0 / d.Z0  # intermediate input requirement coefficient
         self.ay = d.Y0 / d.Z0  # composite factor input requirement coefficient

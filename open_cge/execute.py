@@ -34,7 +34,7 @@ u = (
 )
 ind = ("AGR", "OIL", "IND", "SER")
 h = ("LAB", "CAP", "LAND", "NTR")
-w = ("LAB", "LAND", "NTR")
+# w = ("LAB", "LAND", "NTR") not used in code
 
 
 def check_square():
@@ -94,7 +94,7 @@ def runner():
     # solve cge_system
     dist = 10
     tpi_iter = 0
-    tpi_max_iter = 1000
+    tpi_max_iter = 1000 
     tpi_tol = 1e-10
     xi = 0.1
 
@@ -104,13 +104,14 @@ def runner():
     # Load data and parameters classes
     d = calibrate.model_data(sam, h, ind)
     p = calibrate.parameters(d, ind)
-
+    
+    
     R = d.R0
     er = 1
 
     Zbar = d.Z0
     Ffbar = d.Ff0
-    Kdbar = d.Kd0
+    # Kdbar = d.Kd0; N
     Qbar = d.Q0
     pdbar = pvec[0 : len(ind)]
 

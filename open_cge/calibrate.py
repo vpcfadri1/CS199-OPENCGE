@@ -1,7 +1,7 @@
 # import packages
 import numpy as np
 from pandas import Series, DataFrame
-
+from pprint import pprint
 
 class model_data(object):
     """
@@ -16,7 +16,7 @@ class model_data(object):
     Returns:
         model_data (data class): Data used in the CGE model
     """
-
+    print("local version")
     def __init__(self, sam, h, ind):
         # foreign saving Y
         self.Sf0 = DataFrame(sam, index=["INV"], columns=["EXT"])
@@ -54,7 +54,7 @@ class model_data(object):
         self.Xx0 = self.X0.sum(axis=0)  # intermediate value, sum of X0
         # output of the i-th good Y
         self.Z0 = self.Y0 + self.Xx0
-
+        pprint(self.Z0)
         # household consumption of the i-th good Y
         self.Xp0 = DataFrame(sam, index=list(ind), columns=["HOH"])
         # government consumption Y
@@ -75,7 +75,7 @@ class model_data(object):
         # production tax rate Y
         tauz = self.Tz0 / self.Z0
         # domestic tax rate Y
-        self.D0 = (1 + tauz.loc["ACT"]) * self.Z0 - self.E0
+        self.D0 = (1 + tauz.loc["IDT"]) * self.Z0 - self.E0
 
         # Compute aggregates Intermediate Values
 
@@ -92,11 +92,11 @@ class model_data(object):
         # aggregate exports
         self.Ee0 = self.E0.sum()
         # aggregate gross domestic product
-        self.Gdp0 = self.XXp0 + self.XXv0 + self.XXg0 + self.Ee0 - self.Mm0
+        # self.Gdp0 = self.XXp0 + self.XXv0 + self.XXg0 + self.Ee0 - self.Mm0
         # growth rate of capital stock
-        self.g = self.XXv0 / self.Kk0
+        # self.g = self.XXv0 / self.Kk0
         # interest rate
-        self.R0 = self.Ff0["CAP"] / self.Kk0
+        # self.R0 = self.Ff0["CAP"] / self.Kk0
 
         # export price index Y
         self.pWe = np.ones(len(ind))
@@ -119,7 +119,13 @@ class parameters(object):
             CGE model.
     """
 
-    def __init__(self, d, ind):
+    def __init__(self, d, ind, sam):
+        # foreign saving Y
+        self.Sf0 = DataFrame(sam, index=["INV"], columns=["EXT"])
+        # private saving Y
+        self.Sp0 = DataFrame(sam, index=["INV"], columns=["HOH"])
+        # government saving/budget balance Y
+        self.Sg0 = DataFrame(sam, index=["INV"], columns=["GOV"])
 
         # elasticity of substitution; Y constant in GAMS sample
         self.sigma = Series(2, index=list(ind))
@@ -153,14 +159,14 @@ class parameters(object):
         total_savings = Sp0 + Sg0 + Sf0
         self.lam = d.Xv0 / total_savings
         # investment demand share
-        self.lam = self.lam["INV"]  # only INV?
+        self.lam = self.lam["INV"]
 
         # production tax rate Y
         self.tauz = d.Tz0 / d.Z0
-        self.tauz = self.tauz.loc["ACT"]  # only ACT?
+        self.tauz = self.tauz.loc["IDT"]
         # import tariff rate Y
         self.taum = d.Tm0 / d.M0
-        self.taum = self.taum.loc["IDT"]  # only IDT?
+        self.taum = self.taum.loc["TRF"] 
 
         # share parameter in Armington function Y
         self.deltam = (

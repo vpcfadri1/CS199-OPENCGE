@@ -1,6 +1,6 @@
-def eqpy(b, F, beta, Y):
+def eqpy(b, F, beta, Y): 
     r"""
-    Production function.
+    Production function.  
 
     .. math::
         Y_{i} = b_{i}\prod_{h}F_{h,i}^{\beta_{h,i}}
@@ -82,21 +82,25 @@ def eqpz(ay, ax, py, pq):
     return pz
 
 
-def eqXv(lam, XXv):
+def eqXv(lam, Sp, Sf, epsilon, Sg, pq):
     r"""
     Investment demand for each good i
 
     .. math::
-        Xv_{j} = \lambda_{i}XXv
+        Xv_{j} = \lambda_{i}XXv (not this)
+        Xv_{j} = lambda(i) * (Sp + Sf + epsilon * Sg / pq(i))
 
     Args:
-        lam (1D numpy array): Fixed shares of investment for each good i
-        XXv (float??): Total investment
-
+        lam
+        Sp
+        Sf
+        epsilon
+        Sg
+        pq(i)
     Returns:
         Xv (1D numpy array): Investment demand for each good i
     """
-    Xv = lam * XXv
+    Xv = lam * (Sp + Sg + epsilon * Sf) / pq
     return Xv
 
 

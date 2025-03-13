@@ -20,7 +20,7 @@ def eqF(beta, py, Y, pf):
     return F
 
 
-def eqI(pf, Ff, Sp, Td, Fsh, Trf):
+def eqI(pf, Ff, Sp, Td):
     r"""
     Total income of consumers.
 
@@ -38,7 +38,7 @@ def eqI(pf, Ff, Sp, Td, Fsh, Trf):
     Returns:
         I (float): Total income of consumers
     """
-    I = (pf * Ff).sum() - Sp - Td - Fsh + Trf
+    I = (pf * Ff).sum() - Sp - Td
     return I
 
 

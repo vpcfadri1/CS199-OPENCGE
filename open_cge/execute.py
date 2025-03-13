@@ -14,28 +14,27 @@ current_path = os.path.abspath(os.path.dirname(__file__))
 sam_path = os.path.join(current_path, "SAM.xlsx")
 sam = pd.read_excel(sam_path, index_col=0, header=0)
 
+# load social accounting matrix
+current_path = os.path.abspath(os.path.dirname(__file__))
+sam_path = os.path.join(current_path, "SAM.xlsx")
+sam = pd.read_excel(sam_path, index_col=0, header=0)
+
 # declare sets of variables
 u = (
-    "AGR",
-    "OIL",
-    "IND",
-    "SER",
-    "LAB",
+    "BRD",
+    "MLK",
     "CAP",
-    "LAND",
-    "NTR",
-    "DTX",
+    "LAB",
     "IDT",
-    "ACT",
+    "TRF",
     "HOH",
     "GOV",
     "INV",
     "EXT",
 )
-ind = ("AGR", "OIL", "IND", "SER")
-h = ("LAB", "CAP", "LAND", "NTR")
+ind = ("BRD", "MLK")
+h = ("CAP", "LAB")
 # w = ("LAB", "LAND", "NTR") not used in code
-
 
 def check_square():
     """
@@ -106,7 +105,7 @@ def runner():
     p = calibrate.parameters(d, ind)
     
     
-    R = d.R0
+    # R = d.R0
     er = 1
 
     Zbar = d.Z0

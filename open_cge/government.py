@@ -93,26 +93,21 @@ def eqXg(mu, XXg):
     return Xg
 
 
-def eqSg(mu, Td, Tz, Tm, XXg, Trf, pq):
+def eqSg(ssg, Td, Tz, Tm):
     r"""
     Total government savings.
 
     .. math::
-        Sg = Td + \sum_{i}Tz_{i} + \sum_{i}Tm_{i} - (Trf + \sum_{i}Xg_{i})
+        Sg = ssg \cdot (Td + \sum_{j} Tz_j + \sum_{j} Tm_j)
 
     Args:
-        mu (1D numpy array): Government expenditure share parameters for
-            each good i
-        Td (float): Total direct tax revenue
-        Tz (1D numpy array): Production tax revenue for each good i
-        Tm (1D numpy array): Tariff revenue for each good i
-        XXg (float): Total government spending on goods/services
-        Trf (float): Total transfers to households
-        pq (1D numpy array): price of the Armington good (domestic +
-            imports) for each good i
+        ssg (float): Government savings rate.
+        Td (float): Total direct tax revenue.
+        Tz (1D numpy array): Production tax revenue for each sector j.
+        Tm (1D numpy array): Tariff revenue for each sector j.
 
     Returns:
-        Sg (float): Total government savings
+        Sg (float): Total government savings.
     """
-    Sg = Td + Tz.sum() + Tm.sum() - (Trf + XXg * (mu * pq).sum())
+    Sg = ssg * (Td + Tz.sum() + Tm.sum())
     return Sg

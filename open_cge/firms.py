@@ -223,7 +223,7 @@ def eqD(gamma, deltad, eta, Q, pq, pd):
         D (1D numpy array): Demand for domestically produced good i from importers
     """
     D = (gamma**eta * deltad * pq / pd) ** (1 / (1 - eta)) * Q
-    return pd
+    return D
 
 
 def eqpd(gamma, deltad, eta, Q, pq, D):

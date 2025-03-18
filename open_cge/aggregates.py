@@ -1,4 +1,4 @@
-def eqSp(ssp, pf, Ff, Fsh, Trf):
+def eqSp(ssp, pf, Ff):
     r"""
     Total household savings.
 
@@ -15,7 +15,7 @@ def eqSp(ssp, pf, Ff, Fsh, Trf):
     Returns:
         Sp (float): Total household savings
     """
-    Sp = ssp * ((pf * Ff).sum() - Fsh + Trf)
+    Sp = ssp * ((pf * Ff).sum())
     return Sp
 
 
@@ -80,7 +80,7 @@ def eqKk(pf, Ff, R, lam, pq):
     return Kk
 
 
-def eqbop(pWe, pWm, E, M, Sf, Fsh, er):
+def eqbop(pWe, pWm, E, M, Sf):
     r"""
     Balance of payments.
 
@@ -102,7 +102,7 @@ def eqbop(pWe, pWm, E, M, Sf, Fsh, er):
         bop_error (float): Error in balance of payments equation.
 
     """
-    bop_error = (pWe * E).sum() + Sf / er - ((pWm * M).sum() + Fsh / er)
+    bop_error = (pWe * E).sum() + Sf - ((pWm * M).sum())
     return bop_error
 
 
@@ -166,7 +166,7 @@ def eqpf(F, Ff0):
     """
     F1 = F.drop(["CAP"])
     Ff1 = Ff0.drop(["CAP"])
-    pf_error = Ff1 - F1.sum(axis=1)
+    pf_error = Ff0 - F.sum(axis=1)
     return pf_error
 
 

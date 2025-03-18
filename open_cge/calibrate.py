@@ -203,7 +203,7 @@ class parameters(object):
         # transfer rate (Not Used)
         # self.tautr = (d.Trf0.values / d.Ff0["LAB"])[0]
         # government revenue, intermediate value
-        self.ginc = d.Td0 + d.Tz0.sum() + d.Tm0.sum()
-        self.ssg = d.Sg0 / self.ginc
+        self.ginc = d.Td0 + d.Tz0.to_numpy().sum() + d.Tm0.to_numpy().sum()
+        self.ssg = d.Sg0.to_numpy() / self.ginc.to_numpy()
         # household income N
         # self.hinc = d.Ff0.sum()

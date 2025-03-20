@@ -91,8 +91,8 @@ def runner():
     # solve cge_system
     dist = 10
     tpi_iter = 0
-    tpi_max_iter = 1000 
-    tpi_tol = 1e-5
+    tpi_max_iter = 1000
+    tpi_tol = 1e-10
     xi = 0.1
 
     # pvec = pvec_init
@@ -126,7 +126,6 @@ def runner():
         pfprime = Series(pfprime, index=list(h))
 
         pvec = pprime
-
         #Nobuhiro Equations (not including 6.1, 6.17, 6.18, 6.20 6.21, 6.22, 6.24)
         F = hh.eqF(p.beta, pyprime, d.Y0, pfprime) #6.2
         Td = gov.eqTd(p.taud, pfprime, Ffbar) #6.6
@@ -169,6 +168,31 @@ def runner():
         Q = firms.eqQ(p.gamma, p.deltam, p.deltad, p.eta, M, D)
 
     print("Model solved, Q = ", Q.to_markdown())
+    print(f"6.1 err = {pyprime}")
+    print(f"6.2 err = {F - hh.eqF(p.beta, pyprime, d.Y0, pfprime)}")
+    print(f"6.3 err = {Z - firms.eqZ(p.theta, p.xie, p.xid, p.phi, E, D)}")
+    print(f"6.4 err = {Y - firms.eqY(p.ay, Zbar)}")
+    print(f"6.5 err = {pz - firms.eqpz(p.ay, p.ax, pyprime, pq)}")
+    print(f"6.6 err = {Td - gov.eqTd(p.taud, pfprime, Ffbar)}")
+    print(f"6.7 err = {Tz - gov.eqTz(p.tauz, pz, Z)}")
+    print(f"6.8 err = {Tm - gov.eqTm(p.taum, pm, M)}")
+    print(f"6.9 err = {Xg - gov.eqXg(p.mu, d.XXg0)}")
+    print(f"6.10 err = {Xv - firms.eqXv(p.lam, Sp, d.Sf0, er, Sg, pq)}")
+    print(f"6.11 err = {Sp - agg.eqSp(p.ssp, pfprime, Ffbar)}")
+    print(f"6.12 err = {Sg - gov.eqSg(p.ssg, Td, Tz, Tm)}")
+    print(f"6.13 err = {Xp - hh.eqXp(p.alpha, I, pq)}")
+    print(f"6.14 err = {pe - firms.eqpe(er, d.pWe)}")
+    print(f"6.15 err = {pm - firms.eqpm(er, d.pWm)}")
+    print(f"6.16 err = {agg.eqbop(d.pWe, d.pWm, E, M, d.Sf0)}")
+    print(f"6.17 err = {Qprime - firms.eqQ(p.gamma, p.deltam, p.deltad, p.eta, M, D)}")
+    print(f"6.18 err = {M - firms.eqM(p.gamma, p.deltam, p.eta, Qbar, pq, pm, p.taum)}")
+    print(f"6.19 err = {D - firms.eqD(p.gamma, p.deltad, p.eta, Qbar, pq, pdbar)}")
+    print(f"6.20 err = {Zprime - firms.eqZ(p.theta, p.xie, p.xid, p.phi, E, D)}")
+    print(f"6.21 err = {E - firms.eqE(p.theta, p.xie, p.tauz, p.phi, pz, pe, Zbar)}")
+    print(f"6.22 err = {D - firms.eqDex(p.theta, p.xid, p.tauz, p.phi, pz, pdbar, Zbar)}")
+    print(f"6.23 err = {pq - firms.eqpq(pm, pdbar, p.taum, p.eta, p.deltam, p.deltad, p.gamma)}")
+    print(f"6.24 err = {pfprime}")
+
 
     return Q
 # Removed Equations

@@ -95,15 +95,15 @@ def runner():
     tpi_tol = 1e-10
     xi = 0.1
 
-    # pvec = pvec_init
-    pvec = np.ones(len(ind) + len(h))
+    # pvec = pvec_init; initialize all industry and factor endowment prices
+    pvec = np.ones(len(ind) + len(h)) 
 
     # Load data and parameters classes
     d = calibrate.model_data(sam, h, ind) # correct
     p = calibrate.parameters(d, ind, sam) # correct
     
     # R = d.R0
-    er = 1
+    er = 1 # numeraire
 
     Zbar = d.Z0 
     Ffbar = d.Ff0
@@ -120,30 +120,37 @@ def runner():
         print("initial guess = ", pvec)
         results = opt.root(cge.cge_system, pvec, args=cge_args, method="lm", tol=1e-5)
         pprime = results.x
+
+        # Updated Prices
         pyprime = pprime[0 : len(ind)]
         pfprime = pprime[len(ind) : len(ind) + len(h)]
         pyprime = Series(pyprime, index=list(ind))
         pfprime = Series(pfprime, index=list(h))
-
-        pvec = pprime
-        #Nobuhiro Equations (not including 6.1, 6.17, 6.18, 6.20 6.21, 6.22, 6.24)
-        F = hh.eqF(p.beta, pyprime, d.Y0, pfprime) #6.2
-        Td = gov.eqTd(p.taud, pfprime, Ffbar) #6.6
-        Xg = gov.eqXg(p.mu, d.XXg0) #6.9
-        Sp = agg.eqSp(p.ssp, pfprime, Ffbar) #6.11
         
+        pvec = pprime
+        # Nobuhiro Equations (not including 6.1, 6.17, 6.18, 6.20 6.21, 6.22, 6.24)
         pe = firms.eqpe(er, d.pWe)  #6.14
         pm = firms.eqpm(er, d.pWm)  #6.15
         pq = firms.eqpq(pm, pdbar, p.taum, p.eta, p.deltam, p.deltad, p.gamma)  #6.23
-        D = firms.eqD(p.gamma, p.deltad, p.eta, Qbar, pq, pdbar) #6.19
         pz = firms.eqpz(p.ay, p.ax, pyprime, pq) #6.5
+        Td = gov.eqTd(p.taud, pfprime, Ffbar) #6.6
+        F = hh.eqF(p.beta, pyprime, d.Y0, pfprime) #6.2
+        
+        Xg = gov.eqXg(p.mu, d.XXg0) #6.9
+        Sp = agg.eqSp(p.ssp, pfprime, Ffbar) #6.11
         I = hh.eqI(pfprime, Ffbar, Sp, Td)
-        Xp = hh.eqXp(p.alpha, I, pq) #6.13
+        D = firms.eqD(p.gamma, p.deltad, p.eta, Qbar, pq, pdbar) #6.19
         E = firms.eqE(p.theta, p.xie, p.tauz, p.phi, pz, pe, Zbar) #6.21
         D = firms.eqDex(p.theta, p.xid, p.tauz, p.phi, pz, pdbar, Zbar) #6.22
         M = firms.eqM(p.gamma, p.deltam, p.eta, Qbar, pq, pm, p.taum) #6.18
-        Z = firms.eqZ(p.theta, p.xie, p.xid, p.phi, E, D) #6.3
-        epsilon = agg.eqbop(d.pWe, d.pWm, E, M, d.Sf0) #6.16 error function
+
+        Z = firms.eqZ(p.theta, p.xie, p.xid, p.phi, E, D)#6.20
+        Zprime = firms.eqZ(p.theta, p.xie, p.xid, p.phi, E, D) #6.20
+       
+
+        # X = firms.eqX(ax, Z)
+       
+        Xp = hh.eqXp(p.alpha, I, pq) #6.13
         Tm = gov.eqTm(p.taum, pm, M) #6.8
         Tz = gov.eqTz(p.tauz, pz, Z) #6.7
         Sg = gov.eqSg(p.ssg, Td, Tz, Tm) #6.12
@@ -152,14 +159,13 @@ def runner():
 
         Qprime = firms.eqQ(p.gamma, p.deltam, p.deltad, p.eta, M, D)#6.17
         pdprime = firms.eqpd(p.gamma, p.deltam, p.eta, Qprime, pq, D)#Unknown
-        Zprime = firms.eqZ(p.theta, p.xie, p.xid, p.phi, E, D)#6.20
 
-       
       
         Ffprime = d.Ff0
         dist = (((Zbar - Zprime) ** 2) ** (1 / 2)).sum()
-
         print("Distance at iteration ", tpi_iter, " is ", dist)
+
+        # update arguments
         pdbar = xi * pdprime + (1 - xi) * pdbar
         Zbar = xi * Zprime + (1 - xi) * Zbar 
         Qbar = xi * Qprime + (1 - xi) * Qbar
@@ -168,29 +174,7 @@ def runner():
         Q = firms.eqQ(p.gamma, p.deltam, p.deltad, p.eta, M, D)
 
     print("Model solved, Q = ", Q.to_markdown())
-    print(f"6.1 err = {pyprime}")
-    print(f"6.2 err = {F - hh.eqF(p.beta, pyprime, d.Y0, pfprime)}")
-    print(f"6.3 err = {Z - firms.eqZ(p.theta, p.xie, p.xid, p.phi, E, D)}")
-    print(f"6.4 err = {Y - firms.eqY(p.ay, Zbar)}")
-    print(f"6.5 err = {pz - firms.eqpz(p.ay, p.ax, pyprime, pq)}")
-    print(f"6.6 err = {Td - gov.eqTd(p.taud, pfprime, Ffbar)}")
-    print(f"6.7 err = {Tz - gov.eqTz(p.tauz, pz, Z)}")
-    print(f"6.8 err = {Tm - gov.eqTm(p.taum, pm, M)}")
-    print(f"6.9 err = {Xg - gov.eqXg(p.mu, d.XXg0)}")
-    print(f"6.10 err = {Xv - firms.eqXv(p.lam, Sp, d.Sf0, er, Sg, pq)}")
-    print(f"6.11 err = {Sp - agg.eqSp(p.ssp, pfprime, Ffbar)}")
-    print(f"6.12 err = {Sg - gov.eqSg(p.ssg, Td, Tz, Tm)}")
-    print(f"6.13 err = {Xp - hh.eqXp(p.alpha, I, pq)}")
-    print(f"6.14 err = {pe - firms.eqpe(er, d.pWe)}")
-    print(f"6.15 err = {pm - firms.eqpm(er, d.pWm)}")
-    print(f"6.16 err = {agg.eqbop(d.pWe, d.pWm, E, M, d.Sf0)}")
-    print(f"6.17 err = {Qprime - firms.eqQ(p.gamma, p.deltam, p.deltad, p.eta, M, D)}")
-    print(f"6.18 err = {M - firms.eqM(p.gamma, p.deltam, p.eta, Qbar, pq, pm, p.taum)}")
-    print(f"6.19 err = {D - firms.eqD(p.gamma, p.deltad, p.eta, Qbar, pq, pdbar)}")
-    print(f"6.20 err = {Zprime - firms.eqZ(p.theta, p.xie, p.xid, p.phi, E, D)}")
-    print(f"6.21 err = {E - firms.eqE(p.theta, p.xie, p.tauz, p.phi, pz, pe, Zbar)}")
-    print(f"6.22 err = {D - firms.eqDex(p.theta, p.xid, p.tauz, p.phi, pz, pdbar, Zbar)}")
-    print(f"6.23 err = {pq - firms.eqpq(pm, pdbar, p.taum, p.eta, p.deltam, p.deltad, p.gamma)}")
+    print(f"6.16 ")
     print(f"6.24 err = {pfprime}")
 
 

@@ -27,10 +27,22 @@ def cge_system(pvec, args):
     py = Series(py, index=list(ind))
     pf = Series(pf, index=list(h))
     
+    # intermediate values
     Y = firms.eqY(p.ay, Z)
     F = hh.eqF(p.beta, py, Y, pf)
+
+
+    # errors
     pf_error = agg.eqpf(F, d.Ff0) #6.24
-    py_error = firms.eqpy(p.b, F, p.beta, Y) #6.1
+    py_error = firms.eqpy(p.b, F, p.beta, Y) # 6.1 
+
+    pf_error = DataFrame(pf_error)
+    pf_error = pf_error.T
+    pf_error = DataFrame(pf_error, columns=list(h))
+    pf_error = pf_error.iloc[0]
+
+    py_error = py_error.values
+    pf_error = pf_error.values
     p_error = np.append(py_error, pf_error)
 
     return p_error

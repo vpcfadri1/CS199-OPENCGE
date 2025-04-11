@@ -173,9 +173,12 @@ def runner():
 
         Q = firms.eqQ(p.gamma, p.deltam, p.deltad, p.eta, M, D)
 
+
     print("Model solved, Q = ", Q.to_markdown())
-    print(f"6.16 ")
-    print(f"6.24 err = {pfprime}")
+    cge_args = [p, d, ind, h, Zbar, Qbar, pdbar, Ffbar, er]
+    print("Core Equations Error")
+    print(cge.cge_system(pprime, cge_args))
+
 
 
     return Q
